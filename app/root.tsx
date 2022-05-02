@@ -1,7 +1,7 @@
 import type { MetaFunction } from "@remix-run/node";
 import {
   Links,
-  LiveReload,
+  LiveReload, 
   Meta,
   Outlet,
   Scripts,
@@ -25,7 +25,8 @@ export default function App() {
         <Outlet />
         <ScrollRestoration />
         <Scripts />
-        <LiveReload />
+        {/* LiveReload는 소스코드 변경 시 브라우저 자동 새로고침 */}
+        <LiveReload /> 
       </body>
     </html>
   );
