@@ -63,9 +63,9 @@ export default function JokesRoute() {
                         <Link to="new" className="button">
                             Add your own
                         </Link>
-                        <div className="jokes-outlet">
-                            <Outlet />
-                        </div>
+                    </div>
+                    <div className="jokes-outlet">
+                        <Outlet />
                     </div>
                 </div>
             </main>
