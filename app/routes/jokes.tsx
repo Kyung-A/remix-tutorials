@@ -14,6 +14,7 @@ type LoaderData = {
 };
 
 // 데이터를 가져온다 (서버에서 실행되는 코드임)
+// loader는 렌더링 하기 전에 서버에서 호출된다
 export const loader: LoaderFunction = async () => {
     const data: LoaderData = {
         jokeListItems: await db.joke.findMany(), // 조건에 맞는 객체들을 배열에 담아서 반환

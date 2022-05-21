@@ -4,6 +4,7 @@ import { Link, useSearchParams } from '@remix-run/react';
 import { json } from '@remix-run/node';
 
 import { db } from '~/utils/db.server';
+import { login } from '~/utils/session.server';
 import stylesUrl from '../styles/login.css';
 
 export const links: LinksFunction = () => {
@@ -49,6 +50,7 @@ const badRequest = (data: ActionData) => {
     return json(data, { status: 400 })
 }
 
+// action 은 loader보다 먼저 호출됨
 export const action: ActionFunction = async ({
     request
 }) => {
@@ -81,14 +83,20 @@ export const action: ActionFunction = async ({
         return badRequest({ fieldErrors, fields })
     }
 
+    // 리덕스에서 리듀서 만들때랑 비슷한 느낌
     switch (loginType) {
         case 'login': {
-            // 가입된 사용자가 없으면 field와 formError를 반환
-            // 사용자가 있으면 session을 생성하고 '/jokes/로 리다이렉트
-            return badRequest({
-                fields,
-                formError: 'Not implemented'
-            });
+            const user = await login({ username, password });
+            console.log({ user }); // 브라우저에서 실행되는게 아닌 loaders 서버에서 실행되는 코드이기에 터미널에 출력됨
+
+            if (!user) {
+                // 가입된 사용자가 없으면 field와 formError를 반환
+                // 사용자가 있으면 session을 생성하고 '/jokes/로 리다이렉트
+                return badRequest({
+                    fields,
+                    formError: 'Not implemented'
+                });
+            }
         }
         case 'register': {
             const userExists = await db.user.findFirst({
