@@ -8,6 +8,14 @@ interface ILoginForm {
   password: string;
 }
 
+export async function register({ username, password }: ILoginForm) {
+  const passwordHash = await bcrypt.hash(password, 10);
+  const user = await db.user.create({
+    data: { username, passwordHash },
+  });
+  return { id: user.id, username };
+}
+
 export async function login({ username, password }: ILoginForm) {
   const user = await db.user.findUnique({
     where: { username },
