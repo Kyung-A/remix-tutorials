@@ -4,7 +4,7 @@ import { Link, useSearchParams } from '@remix-run/react';
 import { json } from '@remix-run/node';
 
 import { db } from '~/utils/db.server';
-import { login } from '~/utils/session.server';
+import { createUserSession, login } from '~/utils/session.server';
 import stylesUrl from '../styles/login.css';
 
 export const links: LinksFunction = () => {
@@ -97,6 +97,8 @@ export const action: ActionFunction = async ({
                     formError: 'Not implemented'
                 });
             }
+
+            return createUserSession(user.id, redirectTo);
         }
         case 'register': {
             const userExists = await db.user.findFirst({

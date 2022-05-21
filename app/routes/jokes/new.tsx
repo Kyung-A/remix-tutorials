@@ -4,6 +4,7 @@ import { json, redirect } from "@remix-run/node"
 import { useActionData } from "@remix-run/react"
 
 import { db } from "~/utils/db.server"
+import { requireUserId } from '~/utils/session.server';
 
 // 유효성 검사 함수
 function validateJokeContent(content: string) {
@@ -38,6 +39,7 @@ const badRequest = (data: ActionData) => {
 export const action: ActionFunction = async ({
     request
 }) => {
+    const userId = await requireUserId(request);
     const form = await request.formData();
     const name = form.get('name');
     const content = form.get('content');
@@ -60,7 +62,7 @@ export const action: ActionFunction = async ({
         return badRequest({ fieldErrors, fields });
     }
 
-    const joke = await db.joke.create({ data: fields });
+    const joke = await db.joke.create({ data: { ...fields, jokesterId: userId } });
     // 리믹스는 캐시 무효화를 자동으로 처리해준다 (캐시 값을 자동 갱신)
     return redirect(`/jokes/${joke.id}`);
 }
