@@ -4,27 +4,31 @@ import { json } from "@remix-run/node";
 
 import stylesUrl from '~/styles/jokes.css';
 import { db } from "~/utils/db.server";
+import { getUser } from '~/utils/session.server';
 
 export const links: LinksFunction = () => {
     return [{ rel: 'stylesheet', href: stylesUrl }];
 };
 
 type LoaderData = {
+    user: Awaited<ReturnType<typeof getUser>>;
     jokeListItems: Array<{ id: string; name: string }>;
 };
 
 // 데이터를 가져온다 (서버에서 실행되는 코드임)
 // loader는 렌더링 하기 전에 서버에서 호출된다
-export const loader: LoaderFunction = async () => {
-    const data: LoaderData = {
-        jokeListItems: await db.joke.findMany(), // 조건에 맞는 객체들을 배열에 담아서 반환
+export const loader: LoaderFunction = async ({ request }) => {
+    const jokeListItems = await db.joke.findMany({
+        take: 5,
+        orderBy: { createAt: 'desc' },
+        select: { id: true, name: true }
+    });
 
-        // 특정 항목 호출
-        // jokeListItems: await db.joke.findMany({
-        //     take: 3, // index 0~2만 받아옴
-        //     select: { id: true, name: true }, // id, name key 받아와서 렌더링
-        //     orderBy: { createAt: 'desc' }
-        // })
+    const user = await getUser(request);
+
+    const data: LoaderData = {
+        jokeListItems,
+        user
     };
     return json(data);
 }
@@ -42,6 +46,18 @@ export default function JokesRoute() {
                             <span className="logo-medium">J🤪KES</span>
                         </Link>
                     </h1>
+                    {data.user ? (
+                        <div className="user-info">
+                            <span>{`Hi ${data.user.username}`}</span>
+                            <form action='/logout' method="post">
+                                <button type="submit" className="button">
+                                    Logout
+                                </button>
+                            </form>
+                        </div>
+                    ) : (
+                        <Link to="/login">Login</Link>
+                    )}
                 </div>
             </header>
 
