@@ -1,4 +1,4 @@
-import type { ActionFunction, LinksFunction } from '@remix-run/node';
+import type { ActionFunction, LinksFunction, MetaFunction } from '@remix-run/node';
 import { useActionData } from '@remix-run/react';
 import { Link, useSearchParams } from '@remix-run/react';
 import { json } from '@remix-run/node';
@@ -9,6 +9,14 @@ import stylesUrl from '../styles/login.css';
 
 export const links: LinksFunction = () => {
     return [{ rel: 'stylesheet', href: stylesUrl }];
+};
+
+export const meta: MetaFunction = () => {
+    return {
+        title: "농담 앱 | Login",
+        description:
+            "Login to submit your own jokes to Remix Jokes!",
+    };
 };
 
 // 유효성 검사 함수

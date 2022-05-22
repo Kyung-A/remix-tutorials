@@ -1,6 +1,6 @@
-import type { MetaFunction } from "@remix-run/node";
-import type { LinksFunction } from '@remix-run/node';
+import type { LinksFunction, MetaFunction } from '@remix-run/node';
 import {
+  Meta,
   Links,
   LiveReload,
   Outlet,
@@ -11,11 +11,20 @@ import globalStylesUrl from './styles/global.css';
 import globalMedumStylesUrl from './styles/global-medium.css';
 import globalLargeStylesUrl from './styles/global-large.css';
 
-export const meta: MetaFunction = () => ({
-  charset: "utf-8",
-  title: "New Remix App",
-  viewport: "width=device-width,initial-scale=1",
-});
+export const meta: MetaFunction = () => {
+  const description = `Learn Remix and laugh at the same time!`;
+  return {
+    charset: "utf-8",
+    description,
+    keywords: "Remix,jokes",
+    "twitter:image": "https://remix-jokes.lol/social.png",
+    "twitter:card": "summary_large_image",
+    "twitter:creator": "@remix_run",
+    "twitter:site": "@remix_run",
+    "twitter:title": "Remix Jokes",
+    "twitter:description": description,
+  };
+};
 
 export const links: LinksFunction = () => {
   return [
@@ -36,6 +45,7 @@ function Document({
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
+        <Meta />
         <title>{title}</title>
         <Links />
       </head>
